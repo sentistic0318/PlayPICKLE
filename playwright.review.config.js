@@ -1,0 +1,2 @@
+const {defineConfig}=require('@playwright/test');
+module.exports=defineConfig({testDir:'./tests/browser-review',outputDir:'test-results/review-browser',workers:1,timeout:60000,use:{baseURL:'http://127.0.0.1:4174',trace:'retain-on-failure'},webServer:{command:'node scripts/serve.cjs',env:{PLAYPICKLE_TEST_DIST:'test-results/review-web',PLAYPICKLE_TEST_PORT:'4174'},url:'http://127.0.0.1:4174',reuseExistingServer:false},reporter:'list'});

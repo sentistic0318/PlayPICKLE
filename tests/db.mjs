@@ -1,9 +1,12 @@
 import {PGlite} from '@electric-sql/pglite';
 import {btree_gist} from '@electric-sql/pglite/contrib/btree_gist';
 import fs from 'node:fs/promises';
-export async function createTestDb(){
+export async function createTestDb(options={}){
  const db=new PGlite({extensions:{btree_gist}});
- await db.exec(`
+ await initializeTestDb(db,options);
+ return db;
+}
+export const bootstrapSql=`
  create role anon;create role authenticated;create role service_role bypassrls;
  create schema auth;create schema storage;
  create table auth.users(id uuid primary key,email text,raw_user_meta_data jsonb default '{}',email_confirmed_at timestamptz);
@@ -16,9 +19,11 @@ export async function createTestDb(){
  alter table storage.objects enable row level security;
  create function storage.foldername(name text) returns text[] language sql immutable as $$ select string_to_array(name,'/') $$;
  grant all on storage.objects to authenticated,service_role;
- `);
+ `;
+export async function initializeTestDb(db,{migrationFilter=()=>true}={}) {
+ await db.exec(bootstrapSql);
  const dir=new URL('../supabase/migrations/',import.meta.url);
- for(const file of (await fs.readdir(dir)).filter(f=>f.endsWith('.sql')).sort()){
+ for(const file of (await fs.readdir(dir)).filter(f=>f.endsWith('.sql')&&migrationFilter(f)).sort()){
   try{await db.exec(await fs.readFile(new URL(file,dir),'utf8'));}catch(error){throw new Error(file+': '+error.message,{cause:error});}
  }
  return db;

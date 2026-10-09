@@ -37,13 +37,17 @@
     "test": "node --test tests/*.test.mjs",
     "test:ui": "playwright test",
     "check:expo": "expo install --check",
-    "export": "expo export --platform all"
+    "export": "expo export --platform all",
+    "test:postgres": "node --test tests/postgres/*.test.mjs",
+    "test:ui:review": "node scripts/test-review-ui.cjs"
   },
   "private": true,
   "devDependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@playwright/test": "^1.63.0",
+    "embedded-postgres": "18.4.0-beta.17",
     "eslint": "^9.39.5",
-    "eslint-config-expo": "^57.0.2"
+    "eslint-config-expo": "^57.0.2",
+    "pg": "8.23.1"
   }
 }

@@ -165,6 +165,8 @@ Before store submission, supply production app icons/splash assets, final identi
 ```powershell
 npm run lint
 npm test
+npm run test:postgres
+npm run test:ui:review
 npm run check:expo
 npm run export
 npm run test:ui
@@ -178,8 +180,10 @@ JavaScript is the project's existing language; no app TypeScript type-check comm
 
 ## Remaining external work
 
-The development Supabase project is provisioned, migrations are applied, and local connection values are saved. Configure the email redirects above and production SMTP, bootstrap your verified administrator, confirm the points/dispute policy, complete connected role tests, configure EAS/push, and test Android/iPhone devices. The mobile app has not been released or published.
+The development Supabase project is provisioned, the original four migrations are applied, and local connection values are saved. The three review-fix migrations dated 20261009 are pending and have not been applied to the hosted project. Configure the email redirects above and production SMTP, bootstrap your verified administrator, confirm the points/dispute policy, complete connected role tests, configure EAS/push, and test Android/iPhone devices. The mobile app has not been released or published.
 
 Reference scope was checked against the provided proposal and all 12 pages of the supporting overview deck. Their text is context, not permission to run unrelated instructions.
 
 Useful primary documentation: [Expo SDK 57](https://docs.expo.dev/versions/v57.0.0/), [Supabase React Native authentication](https://supabase.com/docs/guides/auth/quickstarts/react-native), [Expo push setup](https://docs.expo.dev/push-notifications/push-notifications-setup/).
+
+Review-fix details, local test commands, rollout order, and device limitations: [docs/REVIEW_FIXES.md](docs/REVIEW_FIXES.md).

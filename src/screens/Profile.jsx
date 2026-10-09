@@ -5,9 +5,9 @@ import {Ionicons} from '@expo/vector-icons';
 import {Screen,Title,Body,Eyebrow,Card,Field,Button,Action,Notice,Section,Badge,Row,Chip,DataState} from '../components/ui';
 import {useAuth} from '../providers/AuthProvider';
 import {useData} from '../hooks/useData';
-import {query,rpc,client,unwrap} from '../lib/api';
+import {query,rpc} from '../lib/api';
 import {chooseAndUploadImage} from '../lib/images';
-import {enablePush} from '../lib/notifications';
+import {enablePush,signOutDevice} from '../lib/notifications';
 import {colors} from '../theme';
 function ProfileDetails(){
  const {user,profile,memberships,isAdmin,refreshProfile,error}=useAuth();
@@ -21,7 +21,7 @@ function ProfileDetails(){
  <Section title="Your game"><Button title="Reservations & competition history" variant="secondary" icon="time-outline" onPress={()=>router.push('/history')}/><Button title="Notification inbox" variant="secondary" icon="notifications-outline" onPress={()=>router.push('/notifications')}/><Action title="Enable device notifications" variant="secondary" run={enablePush} onDone={setMessage}/></Section>
  <Section title="Club community"><Button title={memberships.length?'Open club workspace':'Apply to register your club'} variant="secondary" icon="business-outline" onPress={()=>router.push('/manage')}/>{isAdmin&&<Button title="Platform administration" variant="secondary" onPress={()=>router.push('/admin')}/>}
  <DataState state={invites} emptyTitle="No staff invitations" emptyMessage="Club invitations sent to your email will appear here.">{invites.data?.map(i=><Card key={i.id}><Title style={{fontSize:22}}>{i.clubs?.name||'Club invitation'}</Title><Body>Access: {i.permissions.join(', ')}</Body><Action title="Accept staff invitation" run={()=>rpc('accept_staff_invite',{p_invitation_id:i.id})} onDone={async()=>{await refreshProfile();invites.reload();setMessage('Club access added to your account.');}}/></Card>)}</DataState></Section>
- <Action title="Sign out" variant="ghost" run={()=>unwrap(client().auth.signOut())} onDone={()=>router.replace('/auth/sign-in')}/>
+ <Action title="Sign out" variant="ghost" run={signOutDevice} onDone={()=>router.replace('/auth/sign-in')}/>
  <Body style={{fontSize:13,textAlign:'center',color:colors.muted}}>PlayPICKLE · A little more play, every day.</Body></Screen>;
 }
 

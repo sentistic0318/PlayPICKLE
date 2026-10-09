@@ -101,7 +101,7 @@ test('PlayPICKLE database business and permission regression suite',async t=>{
   await as(owner,()=>assert.rejects(call('schedule_match',[m.id,court,slots[0].starts_at,slots[0].ends_at]),/conflict|exclusion/));
   await as(owner,()=>call('schedule_match',[m.id,court,slots[1].starts_at,slots[1].ends_at]));
   await as(owner,()=>assert.rejects(call('submit_match_score',[m.id,11,5]),/started/));
-  await db.query("update public.matches set starts_at=now()-interval '1 hour',ends_at=now() where id=$1",[m.id]);
+  await db.query("update public.matches set starts_at=date_trunc('day',now())-interval '1 day'+round*interval '1 hour',ends_at=date_trunc('day',now())-interval '1 day'+(round+1)*interval '1 hour' where id=$1",[m.id]);
   await as(owner,()=>assert.rejects(call('submit_match_score',[m.id,11,10]),/valid completed/));
   await as(owner,()=>call('submit_match_score',[m.id,11,5]));
   await as(players[0],()=>assert.rejects(call('verify_match',[m.id]),/permission/));
@@ -114,7 +114,7 @@ test('PlayPICKLE database business and permission regression suite',async t=>{
    if(!ready.length)break;
    for(const m of ready){
     // Fixture clock advance: score validation is exercised after the simulated scheduled start.
-    await db.query("update public.matches set status='scheduled',court_id=$2,starts_at=now()-interval '1 hour',ends_at=now() where id=$1",[m.id,court]);
+    await db.query("update public.matches set status='scheduled',court_id=$2,starts_at=date_trunc('day',now())-interval '1 day'+round*interval '1 hour',ends_at=date_trunc('day',now())-interval '1 day'+(round+1)*interval '1 hour' where id=$1",[m.id,court]);
     await as(owner,()=>call('submit_match_score',[m.id,11,5]));await as(owner,()=>call('verify_match',[m.id]));await as(owner,()=>call('verify_match',[m.id]));
    }
   }

@@ -15,3 +15,16 @@ export async function query(table,{select='*',filters={},order,limit=100}={}){
  if(order)q=q.order(typeof order==='string'?order:order.column,{ascending:typeof order==='string'?true:order.ascending!==false});
  return unwrap(q.limit(limit));
 }
+
+// Keyset pagination also handles server page caps smaller than our requested size.
+// UUID order is stable across pages; presentation ordering is applied afterwards.
+export async function queryAll(table, options={}) {
+ const rows=[];let after=null;
+ for (;;) {
+  const page=await query(table,{...options,filters:{...options.filters,...(after?{id:{gt:after}}:{})},order:'id',limit:100});
+  if (!page.length) return rows;
+  const next=page[page.length-1].id;
+  if (!next || (after && next<=after)) throw new Error('Unable to load the complete dataset. Please refresh.');
+  rows.push(...page);after=next;
+ }
+}

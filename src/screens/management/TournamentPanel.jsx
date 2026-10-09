@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 import { Badge, Body, Button, Card, Empty, Field, Notice } from '../../components/ui';
 import { query, rpc } from '../../lib/api';
+import {loadTournamentEntries} from '../../lib/tournamentData';
 import { useData } from '../../hooks/useData';
 import { useAuth } from '../../providers/AuthProvider';
 import { Chips, DateRange, FetchState, FormCard, Stack, Toggle, day, localTime, number, required, styles, timeRange, timestamp, useAction } from './shared';
@@ -76,7 +77,7 @@ function TeamRecord({team,event,reload,canManage}){
 }
 function EventOperations({event,club,courts,canManage,canResults,reload,isAdmin}){
  const [tab,setTab]=useState('Teams'),[cancel,setCancel]=useState(false),[reason,setReason]=useState('');
- const state=useData(async()=>{const [teams,matches]=await Promise.all([query('teams',{filters:{tournament_id:event.id},order:'created_at'}),query('matches',{filters:{tournament_id:event.id},order:'round'})]);return {teams,matches};},[event.id],['teams','matches']);
+ const state=useData(()=>loadTournamentEntries(event.id),[event.id],['teams','matches']);
  const refresh=async()=>{await reload();await state.reload();};const action=useAction(refresh);
  return <Stack><FormCard title={event.title}><Badge>{event.status}</Badge><Body>{localTime(event.starts_at,club.timezone)} · {event.category} doubles</Body><Body>Registration closes {localTime(event.registration_deadline,club.timezone)}.</Body>
  {canManage&&event.status==='draft'?<Button title="Publish tournament" loading={action.busy} onPress={()=>action.run(()=>rpc('publish_tournament',{p_tournament_id:event.id}),'Tournament published.')}/>:null}

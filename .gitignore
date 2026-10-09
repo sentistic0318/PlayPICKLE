@@ -49,3 +49,6 @@ yarn-error.*
 
 playwright-report/
 test-results/
+
+# Supabase CLI local cache
+supabase/.temp/
