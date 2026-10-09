@@ -1,0 +1,5 @@
+export function dateTime(value,timeZone){if(!value)return 'To be scheduled';return new Intl.DateTimeFormat(undefined,{dateStyle:'medium',timeStyle:'short',...(timeZone?{timeZone}:{})}).format(new Date(value));}
+export function clockTime(value,timeZone){return new Intl.DateTimeFormat(undefined,{hour:'numeric',minute:'2-digit',...(timeZone?{timeZone}:{})}).format(new Date(value));}
+export function money(value,currency='PHP'){return new Intl.NumberFormat(undefined,{style:'currency',currency}).format(Number(value||0));}
+export function localDate(timeZone='UTC',offset=0){const parts=new Intl.DateTimeFormat('en-CA',{timeZone,year:'numeric',month:'2-digit',day:'2-digit'}).formatToParts(new Date());const date=['year','month','day'].map(t=>parts.find(p=>p.type===t).value).join('-');const shifted=new Date(date+'T12:00:00Z');shifted.setUTCDate(shifted.getUTCDate()+offset);return shifted.toISOString().slice(0,10);}
+export function parseAuthLink(url){const parsed=new URL(url);const params=new URLSearchParams(parsed.search);new URLSearchParams(parsed.hash.replace(/^#/,'')).forEach((v,k)=>params.set(k,v));return Object.fromEntries(params);}
